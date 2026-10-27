@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Excel en Acción</title>
+
+    <style>
+        :root {
+            --verde: #147d52;
+            --verde-oscuro: #0d593b;
+            --fondo: #f3f7f5;
+            --texto: #20372e;
+            --borde: #d6e3dc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            /* Cuadrícula de celdas y luces suaves */
+            background-color: #edf7f1;
+
+            background-image:
+                radial-gradient(circle at 10% 20%,
+                    rgba(20, 125, 82, 0.18),
+                    transparent 35%),
+                radial-gradient(circle at 90% 75%,
+                    rgba(77, 184, 145, 0.20),
+                    transparent 35%),
+                linear-gradient(rgba(20, 125, 82, 0.06) 1px,
+                    transparent 1px),
+                linear-gradient(90deg,
+                    rgba(20, 125, 82, 0.06) 1px,
+                    transparent 1px);
+
+            background-size:
+                100% 100%,
+                100% 100%,
+                42px 42px,
+                42px 42px;
+            color: var(--texto);
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        header {
+            background: var(--verde-oscuro);
+            color: white;
+            padding: 22px;
+        }
+
+        .cabecera {
+            max-width: 1050px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .marca {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 1050px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .tarjeta {
+            background: white;
+            border: 1px solid var(--borde);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 20px #153e2510;
+        }
+
+        .acceso {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        h1,
+        h2,
+        h3 {
+            line-height: 1.25;
+        }
+
+        h1 {
+            font-size: clamp(28px, 5vw, 42px);
+        }
+
+        .etiqueta {
+            color: var(--verde);
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .suave {
+            color: #52675d;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #a8bdb0;
+            border-radius: 9px;
+            font: inherit;
+            margin: 7px 0 15px;
+        }
+
+        button {
+            background: var(--verde);
+            color: white;
+            border: 0;
+            border-radius: 9px;
+            padding: 12px 18px;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--verde-oscuro);
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: default;
+        }
+
+        button.secundario {
+            color: var(--verde-oscuro);
+            background: #e7f1eb;
+        }
+
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid #e1a625;
+            outline-offset: 3px;
+        }
+
+        .barra {
+            height: 12px;
+            background: #e4ece7;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        #avance {
+            height: 100%;
+            width: 0;
+            background: var(--verde);
+            transition: width .3s;
+        }
+
+        .modulos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 22px 0;
+        }
+
+        .modulo {
+            background: white;
+            color: var(--texto);
+            text-align: left;
+            border: 2px solid var(--borde);
+            padding: 20px;
+        }
+
+        .modulo:hover {
+            background: #eaf5ee;
+        }
+
+        .modulo.activo {
+            border-color: var(--verde);
+            background: #eaf5ee;
+        }
+
+        .modulo strong {
+            display: block;
+            font-size: 20px;
+        }
+
+        .modulo small {
+            display: block;
+            margin-top: 8px;
+        }
+
+        code {
+            background: #eaf1ed;
+            color: #125f40;
+            border-radius: 5px;
+            padding: 3px 7px;
+            overflow-wrap: anywhere;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        th,
+        td {
+            border: 1px solid #c9d8cf;
+            padding: 10px 14px;
+            text-align: left;
+        }
+
+        th {
+            background: #e9f2ed;
+        }
+
+        .opciones {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .opcion {
+            text-align: left;
+            background: white;
+            color: var(--texto);
+            border: 1px solid #afc4b7;
+        }
+
+        .opcion:hover {
+            background: #edf5f0;
+        }
+
+        .opcion.correcta {
+            background: #dff4e7;
+            border-color: var(--verde);
+        }
+
+        .opcion.incorrecta {
+            background: #fff0ed;
+            border-color: #bc5340;
+        }
+
+        .mensaje {
+            padding: 15px;
+            border-radius: 9px;
+            background: #edf4f0;
+            margin: 15px 0;
+        }
+
+        .mensaje.error {
+            background: #fff0ed;
+            color: #843b2c;
+        }
+
+        .acciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #52675d;
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+            .modulos {
+                grid-template-columns: 1fr;
+            }
+
+            .tarjeta {
+                padding: 20px;
+            }
+        }
+
+        /* PORTADA CON FORMULARIO E ILUSTRACIÓN */
+        .portada {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+            min-height: 65vh;
+        }
+
+        .portada .acceso {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+
+        .excel-visual {
+            padding: 28px;
+            border-radius: 22px;
+            background: linear-gradient(145deg, #dcf5e7, #edf7f1);
+            overflow: hidden;
+        }
+
+        .excel-visual h2 {
+            font-size: clamp(26px, 4vw, 36px);
+            margin-bottom: 12px;
+        }
+
+        .insignia {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #147d52;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .hoja-animada {
+            background: white;
+            border: 1px solid #bad8c7;
+            border-radius: 14px;
+            padding: 18px;
+            margin-top: 25px;
+            box-shadow: 0 18px 30px #0d593b20;
+            animation: flotar 5s ease-in-out infinite;
+        }
+
+        .titulo-hoja {
+            font-weight: bold;
+            color: #147d52;
+            margin-bottom: 15px;
+        }
+
+        .formula-visual {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: #f0f6f2;
+            border: 1px solid #d6e3dc;
+            border-radius: 7px;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+
+        .formula-visual strong {
+            color: #147d52;
+            font-size: 20px;
+        }
+
+        .mini-excel {
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .mini-excel th,
+        .mini-excel td {
+            padding: 8px;
+        }
+
+        .celda-total {
+            background: #d7f5e3;
+            color: #0d593b;
+            font-weight: bold;
+            outline: 2px solid #147d52;
+            outline-offset: -2px;
+        }
+
+        .celda-total.destello {
+            animation: celebrar .55s ease;
+        }
+
+        .pie-visual {
+            text-align: center;
+            color: #326b50;
+            font-size: 14px;
+            margin-top: 25px;
+        }
+
+        @keyframes flotar {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-9px);
+            }
+        }
+
+        @keyframes celebrar {
+
+            0%,
+            100% {
+                background: #d7f5e3;
+            }
+
+            50% {
+                background: #ffe38a;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .portada {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Respeta la preferencia de reducir animaciones */
+        @media (prefers-reduced-motion: reduce) {
+
+            .hoja-animada,
+            .celda-total.destello {
+                animation: none;
+            }
+        }
+
+        /* La portada contiene el fondo y los dos paneles */
+        .portada {
+            position: relative;
+            isolation: isolate;
+        }
+
+        /* Emblema decorativo detrás del contenido */
+        .emblema-portada {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: min(850px, 100%);
+            height: auto;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            opacity: 0.14;
+            z-index: -1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Panel derecho y mascota */
+        .excel-visual {
+            position: relative;
+        }
+
+        .mascota-portada {
+            display: block;
+            width: min(220px, 65%);
+            height: auto;
+            margin: 0 auto 18px;
+            filter: drop-shadow(0 12px 12px rgba(13, 89, 59, 0.18));
+            animation: mascota-flota 4s ease-in-out infinite;
+        }
+
+        @keyframes mascota-flota {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+        }
+
+        @media (max-width: 760px) {
+            .mascota-portada {
+                width: 160px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .mascota-portada {
+                animation: none;
+            }
+        }
+
+        .portada .acceso {
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .portada .excel-visual {
+            background: rgba(232, 247, 238, 0.90);
+        }
+
+        /* Emblema y nombre del proyecto */
+        .marca {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-cabecera {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .marca strong {
+            display: block;
+            font-size: 24px;
+        }
+
+        .marca em {
+            display: block;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        /* Dos paneles alineados y de igual altura */
+        .portada {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: stretch;
+            min-height: auto;
+            gap: 28px;
+        }
+
+        .portada .acceso,
+        .portada .excel-visual {
+            margin: 0;
+            padding: 28px;
+            border: 1px solid var(--borde);
+            border-radius: 18px;
+            min-width: 0;
+        }
+
+        /* Mascota sobre la bienvenida */
+        .portada .mascota-portada {
+            width: 150px;
+            height: auto;
+            margin: 0 auto 18px;
+        }
+
+        /* Una columna en pantallas pequeñas */
+        @media (max-width: 760px) {
+            .portada {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-cabecera {
+                width: 56px;
+                height: 56px;
+            }
+
+            .marca strong {
+                font-size: 21px;
+            }
+
+            .marca em {
+                font-size: 13px;
+            }
+        }
+
+        /* Encabezado más visible */
+        .marca strong {
+            font-size: 36px;
+        }
+
+        .marca em {
+            font-size: 21px;
+        }
+
+        .cabecera>.acciones {
+            margin-top: 0;
+        }
+
+        /* Aumento proporcional también en celulares */
+        @media (max-width: 760px) {
+            .marca strong {
+                font-size: 31.5px;
+            }
+
+            .marca em {
+                font-size: 19.5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="cabecera">
+
+            <div class="marca">
+                <img src="images/Emblema.png" alt="" class="logo-cabecera">
+
+                <div>
+                    <strong>Excel Maniacos</strong>
+                    <em>La fórmula es aprender jugando</em>
+                </div>
+            </div>
+
+            <div class="acciones">
+                <button id="sonido" class="secundario" type="button" aria-pressed="true">
+                    Sonido: activado
+                </button>
+
+                <button id="salir" class="secundario" type="button" hidden>
+                    Cerrar sesión
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <main>
+        <!-- PANTALLA DE INGRESO -->
+        <div id="portada" class="portada">
+            <section id="pantalla-acceso" class="tarjeta acceso">
+                <img src="images/Mascota.png" alt="Mascota de Excel Maniacos dando la bienvenida"
+                    class="mascota-portada">
+                <span class="etiqueta">Aprende practicando</span>
+                <h1>Tu primera ruta de Excel</h1>
+                <p class="suave">
+                    Lecciones cortas y ejercicios para resolver tareas de estudio y oficina.
+                </p>
+
+                <form id="formulario-acceso">
+                    <label for="nombre">Tu nombre o alias</label>
+                    <input id="nombre" maxlength="30" required autocomplete="nickname" placeholder="Ejemplo: Hiroshi">
+
+                    <button type="submit">Comenzar a aprender</button>
+                </form>
+
+                <p id="error-acceso" role="status"></p>
+                <p class="suave">
+                    Entra con tu nombre o alias y comienza a practicar.
+                    Usa el mismo alias para recuperar tu progreso en este navegador.
+                </p>
+            </section>
+            <aside class="excel-visual" aria-label="Demostración interactiva de SUMA">
+
+                <span class="insignia">TU PRIMER RETO</span>
+                <h2>Los números también juegan.</h2>
+                <p>Cambia los valores y descubre cómo se actualiza una suma.</p>
+
+                <div class="hoja-animada">
+                    <div class="titulo-hoja">▦ Mi primera hoja</div>
+
+                    <div class="formula-visual">
+                        <strong>fx</strong>
+                        <span>=SUMA(B2:B3)</span>
+                    </div>
+
+                    <table class="mini-excel">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>A</th>
+                                <th>B</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>1</th>
+                                <td>Concepto</td>
+                                <td>Importe</td>
+                            </tr>
+                            <tr>
+                                <th>2</th>
+                                <td>Libros</td>
+                                <td id="valor-uno">20</td>
+                            </tr>
+                            <tr>
+                                <th>3</th>
+                                <td>Materiales</td>
+                                <td id="valor-dos">15</td>
+                            </tr>
+                            <tr>
+                                <th>4</th>
+                                <td><strong>Total</strong></td>
+                                <td class="celda-total" id="valor-total">35</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="acciones">
+                        <button type="button" id="cambiar-valores">
+                            🎲 Cambiar valores
+                        </button>
+                    </div>
+
+                    <p id="explicacion-visual" aria-live="polite">
+                        20 + 15 = 35. ¡Excel calcula por ti!
+                    </p>
+                </div>
+
+                <p class="pie-visual">Aprende · Experimenta · Supera tus retos</p>
+            </aside>
+        </div>
+
+        <!-- CURSO -->
+        <div id="pantalla-curso" hidden>
+            <section class="tarjeta">
+                <span class="etiqueta">Tu espacio de aprendizaje</span>
+                <h1 id="saludo"></h1>
+                <p>Comprende una función, practica y aprende de cada respuesta.</p>
+
+                <p id="texto-progreso"></p>
+                <div class="barra" role="progressbar" aria-label="Ejercicios completados" aria-valuemin="0"
+                    aria-valuemax="9" aria-valuenow="0" id="barra-progreso">
+                    <div id="avance"></div>
+                </div>
+
+                <p id="estado-guardado" class="suave" role="status"></p>
+            </section>
+
+            <nav class="modulos" id="modulos" aria-label="Lecciones"></nav>
+
+            <section class="tarjeta" aria-labelledby="titulo-leccion">
+                <span class="etiqueta" id="numero-leccion"></span>
+                <h2 id="titulo-leccion"></h2>
+                <p id="explicacion"></p>
+                <p><strong>Ejemplo:</strong> <code id="formula"></code></p>
+                <p id="detalle-ejemplo" class="suave"></p>
+
+                <hr>
+
+                <div id="zona-ejercicio">
+                    <p class="etiqueta" id="numero-ejercicio"></p>
+                    <h3 id="pregunta"></h3>
+
+                    <div class="tabla-contenedor">
+                        <table id="tabla"></table>
+                    </div>
+
+                    <div id="opciones" class="opciones"></div>
+                    <div id="respuesta" role="status" hidden></div>
+
+                    <div class="acciones">
+                        <button id="siguiente" hidden>Siguiente ejercicio</button>
+                    </div>
+                </div>
+
+                <div id="fin-modulo" hidden>
+                    <h3>¡Lección completada!</h3>
+                    <p id="resumen-modulo"></p>
+                    <div class="acciones">
+                        <button id="otra-leccion">Continuar a la siguiente lección</button>
+                        <button id="repasar" class="secundario">Repasar esta lección</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tarjeta" id="resultado-final" hidden>
+                <span class="etiqueta">Ruta completada</span>
+                <h2>¡Terminaste tus nueve ejercicios!</h2>
+                <p id="resumen-final"></p>
+                <p>
+                    El siguiente paso es aplicar estas funciones en una hoja real:
+                    crea una lista de gastos, calcula su total y promedio,
+                    y clasifica cada gasto con SI.
+                </p>
+            </section>
+
+            <p class="suave">
+                En estos ejemplos usamos funciones en español y punto y coma
+                para separar argumentos. Tu Excel puede usar otros separadores
+                o nombres según su configuración.
+            </p>
+        </div>
+    </main>
+
+    <footer>Proyecto educativo · Excel en Acción · Creado por Hiroshi</footer>
+
+    <script>
+        // 1. CONTENIDO DEL CURSO
+        const lecciones = [
+            {
+                titulo: "SUMA",
+                subtitulo: "Calcula totales",
+                explicacion:
+                    "SUMA agrega los valores de varias celdas. El signo dos puntos " +
+                    "indica un rango: B2:B4 incluye B2, B3 y B4.",
+                formula: "=SUMA(B2:B4)",
+                ejemplo: "Si B2 contiene 20, B3 contiene 15 y B4 contiene 10, el total es 45.",
+                ejercicios: [
+                    {
+                        pregunta: "¿Qué fórmula suma los tres gastos?",
+                        tabla: [
+                            ["Fila", "A · Concepto", "B · Gasto"],
+                            ["2", "Movilidad", "20"],
+                            ["3", "Almuerzo", "15"],
+                            ["4", "Materiales", "10"]
+                        ],
+                        opciones: ["=SUMA(B2:B4)", "=SUMA(B2:B3)", "=PROMEDIO(B2:B4)"],
+                        correcta: 0,
+                        explicacion:
+                            "SUMA(B2:B4) incluye los tres gastos: 20 + 15 + 10 = 45."
+                    },
+                    {
+                        pregunta: "¿Cuál es el resultado de =SUMA(B2:B4)?",
+                        tabla: [
+                            ["Fila", "B · Ventas"],
+                            ["2", "100"],
+                            ["3", "80"],
+                            ["4", "20"]
+                        ],
+                        opciones: ["180", "200", "100"],
+                        correcta: 1,
+                        explicacion: "El total es 100 + 80 + 20 = 200."
+                    },
+                    {
+                        pregunta:
+                            "Se quería sumar las tres compras. ¿Qué error tiene =SUMA(B2:B3)?",
+                        tabla: [
+                            ["Fila", "B · Compras"],
+                            ["2", "30"],
+                            ["3", "40"],
+                            ["4", "50"]
+                        ],
+                        opciones: [
+                            "SUMA no permite sumar compras",
+                            "Falta incluir la celda B4",
+                            "Los números deben estar en la columna A"
+                        ],
+                        correcta: 1,
+                        explicacion:
+                            "El rango termina en B3 y deja fuera B4. Debe ser =SUMA(B2:B4)."
+                    }
+                ]
+            },
+            {
+                titulo: "PROMEDIO",
+                subtitulo: "Encuentra el valor medio",
+                explicacion:
+                    "PROMEDIO calcula la media aritmética: suma los números " +
+                    "y divide el total entre la cantidad de números.",
+                formula: "=PROMEDIO(B2:B4)",
+                ejemplo: "Con las notas 12, 15 y 18, el promedio es 45 ÷ 3 = 15.",
+                ejercicios: [
+                    {
+                        pregunta: "¿Qué fórmula calcula el promedio de las tres notas?",
+                        tabla: [
+                            ["Fila", "A · Evaluación", "B · Nota"],
+                            ["2", "Práctica", "12"],
+                            ["3", "Trabajo", "15"],
+                            ["4", "Examen", "18"]
+                        ],
+                        opciones: [
+                            "=SUMA(B2:B4)",
+                            "=PROMEDIO(B2:B4)",
+                            "=PROMEDIO(B2:B3)"
+                        ],
+                        correcta: 1,
+                        explicacion:
+                            "PROMEDIO(B2:B4) considera las tres notas y obtiene 15."
+                    },
+                    {
+                        pregunta: "¿Cuál es el promedio de estas ventas diarias?",
+                        tabla: [
+                            ["Fila", "B · Ventas"],
+                            ["2", "10"],
+                            ["3", "20"],
+                            ["4", "30"]
+                        ],
+                        opciones: ["60", "30", "20"],
+                        correcta: 2,
+                        explicacion: "10 + 20 + 30 = 60. Luego, 60 ÷ 3 = 20."
+                    },
+                    {
+                        pregunta: "¿Qué resultado produce =PROMEDIO(B2:B4)?",
+                        tabla: [
+                            ["Fila", "B · Puntaje"],
+                            ["2", "10"],
+                            ["3", "0"],
+                            ["4", "20"]
+                        ],
+                        opciones: ["15", "10", "30"],
+                        correcta: 1,
+                        explicacion:
+                            "El cero también cuenta: (10 + 0 + 20) ÷ 3 = 10. " +
+                            "Una celda vacía se trataría de forma diferente."
+                    }
+                ]
+            },
+            {
+                titulo: "SI",
+                subtitulo: "Toma decisiones",
+                explicacion:
+                    "SI evalúa una condición y devuelve un resultado si se cumple " +
+                    "y otro si no se cumple.",
+                formula: '=SI(B2>=11;"Aprobado";"Pendiente")',
+                ejemplo:
+                    "Si B2 vale 14, devuelve Aprobado. Si vale 8, devuelve Pendiente. " +
+                    "Los textos se escriben entre comillas.",
+                ejercicios: [
+                    {
+                        pregunta: "¿Qué muestra la fórmula si la nota es 14?",
+                        tabla: [
+                            ["Celda", "Contenido"],
+                            ["B2", "14"],
+                            ["C2", '=SI(B2>=11;"Aprobado";"Pendiente")']
+                        ],
+                        opciones: ["Pendiente", "Aprobado", "11"],
+                        correcta: 1,
+                        explicacion:
+                            "14 es mayor o igual que 11; por eso devuelve Aprobado."
+                    },
+                    {
+                        pregunta: "¿Qué condición incluye compras de exactamente 100?",
+                        tabla: [
+                            ["Regla", "Detalle"],
+                            ["Descuento", "Se aplica a compras de 100 o más"]
+                        ],
+                        opciones: ["B2>100", "B2<100", "B2>=100"],
+                        correcta: 2,
+                        explicacion:
+                            ">= significa mayor o igual. B2>100 dejaría fuera el valor 100."
+                    },
+                    {
+                        pregunta: "¿Qué muestra la fórmula si el gasto es 80?",
+                        tabla: [
+                            ["Celda", "Contenido"],
+                            ["B2", "80"],
+                            ["C2", '=SI(B2>50;"Revisar";"Conforme")']
+                        ],
+                        opciones: ["Revisar", "Conforme", "50"],
+                        correcta: 0,
+                        explicacion:
+                            "80 es mayor que 50. La condición se cumple y devuelve Revisar."
+                    }
+                ]
+            }
+        ];
+
+        // 2. ESTADO DEL ALUMNO
+        const $ = id => document.getElementById(id);
+
+        let alumno = "";
+        let clave = "";
+        let progreso = {};
+        let moduloActual = 0;
+        let ejercicioActual = 0;
+        let intentos = 0;
+        let respondido = false;
+        let guardadoDisponible = true;
+
+        const totalEjercicios = lecciones.reduce(
+            (total, leccion) => total + leccion.ejercicios.length, 0
+        );
+
+        function identificador() {
+            return moduloActual + "-" + ejercicioActual;
+        }
+
+        function guardar() {
+            try {
+                localStorage.setItem(clave, JSON.stringify(progreso));
+                guardadoDisponible = true;
+            } catch {
+                guardadoDisponible = false;
+            }
+            actualizarProgreso();
+        }
+
+        function actualizarProgreso() {
+            const registros = Object.values(progreso);
+            const completados = registros.length;
+            const puntos = registros.reduce((total, dato) => total + dato.puntos, 0);
+
+            $("texto-progreso").textContent =
+                `${completados}/${totalEjercicios} ejercicios completados · ` +
+                `${puntos}/${totalEjercicios * 100} puntos`;
+
+            $("avance").style.width =
+                (completados / totalEjercicios * 100) + "%";
+
+            $("barra-progreso").setAttribute("aria-valuenow", completados);
+
+            $("estado-guardado").textContent = guardadoDisponible
+                ? "Tu progreso se conserva en este navegador. Cada ejercicio suma puntos una sola vez."
+                : "El navegador no permite guardar el progreso. Puedes continuar durante esta sesión.";
+
+            $("resultado-final").hidden = completados !== totalEjercicios;
+
+            $("resumen-final").textContent =
+                `Completaste la ruta con ${puntos} de ${totalEjercicios * 100} puntos. ` +
+                "Puedes repasar las lecciones sin alterar tu puntaje.";
+
+            mostrarModulos();
+        }
+
+        // 3. ACCESO DE DEMOSTRACIÓN
+        $("formulario-acceso").addEventListener("submit", evento => {
+            evento.preventDefault();
+
+            const nombre = $("nombre").value.trim();
+
+            if (!nombre) {
+                $("error-acceso").textContent = "Escribe tu nombre o alias.";
+                return;
+            }
+
+
+            alumno = nombre;
+            clave = "excel-en-accion-v1-" + alumno.toLowerCase();
+            progreso = {};
+            guardadoDisponible = true;
+
+            try {
+                const datos = JSON.parse(localStorage.getItem(clave) || "{}");
+
+                // Recuperar únicamente registros válidos de este curso.
+                lecciones.forEach((leccion, m) => {
+                    leccion.ejercicios.forEach((ejercicio, e) => {
+                        const id = m + "-" + e;
+                        const registro = datos?.[id];
+
+                        if (
+                            registro &&
+                            [40, 70, 100].includes(registro.puntos)
+                        ) {
+                            progreso[id] = { puntos: registro.puntos };
+                        }
+                    });
+                });
+            } catch {
+                guardadoDisponible = false;
+            }
+
+            $("error-acceso").textContent = "";
+            $("saludo").textContent = `¡Hola, ${alumno}!`;
+            $("portada").hidden = true;
+            $("pantalla-curso").hidden = false;
+            $("salir").hidden = false;
+
+            abrirModulo(0);
+            reproducirSonido("inicio");
+        });
+
+        // 4. NAVEGACIÓN POR LECCIONES
+        function mostrarModulos() {
+            $("modulos").replaceChildren();
+
+            lecciones.forEach((leccion, indice) => {
+                const boton = document.createElement("button");
+                boton.type = "button";
+                boton.className = "modulo" +
+                    (indice === moduloActual ? " activo" : "");
+
+                boton.setAttribute("aria-pressed", indice === moduloActual);
+
+                const titulo = document.createElement("strong");
+                titulo.textContent = `${indice + 1}. ${leccion.titulo}`;
+
+                const detalle = document.createElement("span");
+                detalle.textContent = leccion.subtitulo;
+
+                const estado = document.createElement("small");
+                const hechos = leccion.ejercicios.filter(
+                    (_, e) => progreso[indice + "-" + e]
+                ).length;
+
+                estado.textContent = `${hechos}/3 ejercicios completados`;
+
+                boton.append(titulo, detalle, estado);
+                boton.addEventListener("click", () => abrirModulo(indice));
+                $("modulos").appendChild(boton);
+            });
+        }
+
+        function abrirModulo(indice) {
+            moduloActual = indice;
+            const leccion = lecciones[indice];
+
+            $("numero-leccion").textContent = `Lección ${indice + 1} de 3`;
+            $("titulo-leccion").textContent = leccion.titulo;
+            $("explicacion").textContent = leccion.explicacion;
+            $("formula").textContent = leccion.formula;
+            $("detalle-ejemplo").textContent = leccion.ejemplo;
+
+            const pendiente = leccion.ejercicios.findIndex(
+                (_, e) => !progreso[indice + "-" + e]
+            );
+
+            ejercicioActual = pendiente === -1 ? 0 : pendiente;
+            actualizarProgreso();
+            mostrarEjercicio();
+        }
+
+        // 5. MOSTRAR UN EJERCICIO
+        function mostrarEjercicio() {
+            intentos = 0;
+            respondido = false;
+
+            $("zona-ejercicio").hidden = false;
+            $("fin-modulo").hidden = true;
+            $("respuesta").hidden = true;
+            $("siguiente").hidden = true;
+
+            const ejercicio =
+                lecciones[moduloActual].ejercicios[ejercicioActual];
+
+            $("numero-ejercicio").textContent =
+                `Ejercicio ${ejercicioActual + 1} de 3`;
+
+            $("pregunta").textContent = ejercicio.pregunta;
+            $("tabla").replaceChildren();
+
+            ejercicio.tabla.forEach((fila, indice) => {
+                const tr = document.createElement("tr");
+
+                fila.forEach(texto => {
+                    const celda = document.createElement(indice === 0 ? "th" : "td");
+                    if (indice === 0) celda.scope = "col";
+                    celda.textContent = texto;
+                    tr.appendChild(celda);
+                });
+
+                $("tabla").appendChild(tr);
+            });
+
+            $("opciones").replaceChildren();
+
+            ejercicio.opciones.forEach((texto, indice) => {
+                const boton = document.createElement("button");
+                boton.type = "button";
+                boton.className = "opcion";
+                boton.textContent = texto;
+
+                boton.addEventListener("click", () =>
+                    comprobar(indice, boton)
+                );
+
+                $("opciones").appendChild(boton);
+            });
+
+            if (progreso[identificador()]) {
+                $("respuesta").hidden = false;
+                $("respuesta").className = "mensaje";
+                $("respuesta").textContent =
+                    "Modo repaso: ya completaste este ejercicio. " +
+                    "Puedes responder de nuevo, pero tu puntaje se mantiene.";
+            }
+        }
+
+        // 6. COMPROBAR Y EXPLICAR
+        function comprobar(opcion, boton) {
+            if (respondido) return;
+
+            const ejercicio =
+                lecciones[moduloActual].ejercicios[ejercicioActual];
+
+            intentos++;
+            $("respuesta").hidden = false;
+
+            if (opcion !== ejercicio.correcta) {
+                reproducirSonido("error");
+                boton.classList.add("incorrecta");
+                boton.disabled = true;
+                $("respuesta").className = "mensaje error";
+                $("respuesta").textContent =
+                    "Todavía no. Revisa la tabla y el ejemplo de la lección, " +
+                    "y prueba otra opción.";
+                return;
+            }
+
+            respondido = true;
+            reproducirSonido("acierto");
+            boton.classList.add("correcta");
+
+            $("opciones").querySelectorAll("button").forEach(b => {
+                b.disabled = true;
+            });
+
+            const yaCompletado = Boolean(progreso[identificador()]);
+            const puntos = intentos === 1 ? 100 : intentos === 2 ? 70 : 40;
+
+            if (!yaCompletado) {
+                progreso[identificador()] = { puntos };
+                guardar();
+            }
+
+            $("respuesta").className = "mensaje";
+            $("respuesta").textContent =
+                "¡Correcto! " + ejercicio.explicacion +
+                (yaCompletado
+                    ? " Repaso completado: tu puntaje se mantiene."
+                    : ` Ganaste ${puntos} puntos.`);
+
+            $("siguiente").textContent =
+                ejercicioActual === 2 ? "Terminar lección" : "Siguiente ejercicio";
+
+            $("siguiente").hidden = false;
+        }
+
+        // 7. CONTINUAR Y REPASAR
+        $("siguiente").addEventListener("click", () => {
+            if (!respondido) return;
+
+            if (ejercicioActual < 2) {
+                ejercicioActual++;
+                mostrarEjercicio();
+                return;
+            }
+
+            $("zona-ejercicio").hidden = true;
+            $("fin-modulo").hidden = false;
+
+            const puntos = lecciones[moduloActual].ejercicios.reduce(
+                (total, _, e) =>
+                    total + (progreso[moduloActual + "-" + e]?.puntos || 0),
+                0
+            );
+
+            $("resumen-modulo").textContent =
+                `Puntaje de esta lección: ${puntos}/300. ` +
+                "Puedes repasar o elegir otra lección.";
+
+            $("otra-leccion").hidden = moduloActual === lecciones.length - 1;
+        });
+
+        $("otra-leccion").addEventListener("click", () => {
+            if (moduloActual < lecciones.length - 1) {
+                abrirModulo(moduloActual + 1);
+            }
+        });
+
+        $("repasar").addEventListener("click", () => {
+            ejercicioActual = 0;
+            mostrarEjercicio();
+        });
+
+        $("salir").addEventListener("click", () => {
+            $("pantalla-curso").hidden = true;
+            $("portada").hidden = false;
+            $("salir").hidden = true;
+            $("nombre").focus();
+        });
+        // SONIDOS RETRO
+        let sonidoActivo = true;
+        let contextoAudio;
+
+        function reproducirSonido(tipo) {
+            if (!sonidoActivo) return;
+
+            try {
+                const Audio = window.AudioContext || window.webkitAudioContext;
+                if (!Audio) return;
+
+                contextoAudio = contextoAudio || new Audio();
+
+                const tocar = () => {
+                    const melodias = {
+                        inicio: [392, 523.25, 659.25],
+                        acierto: [523.25, 659.25, 783.99, 1046.5],
+                        error: [220, 164.81],
+                        cambio: [523.25, 783.99]
+                    };
+
+                    const notas = melodias[tipo] || melodias.cambio;
+                    const ahora = contextoAudio.currentTime;
+
+                    notas.forEach((frecuencia, indice) => {
+                        const oscilador = contextoAudio.createOscillator();
+                        const volumen = contextoAudio.createGain();
+
+                        const comienzo = ahora + indice * 0.10;
+                        const final = comienzo + 0.13;
+
+                        oscilador.type = "triangle";
+                        oscilador.frequency.value = frecuencia;
+
+                        volumen.gain.setValueAtTime(0, comienzo);
+                        volumen.gain.linearRampToValueAtTime(0.06, comienzo + 0.01);
+                        volumen.gain.exponentialRampToValueAtTime(0.001, final);
+
+                        oscilador.connect(volumen);
+                        volumen.connect(contextoAudio.destination);
+
+                        oscilador.start(comienzo);
+                        oscilador.stop(final + 0.01);
+                    });
+                };
+
+                if (contextoAudio.state === "suspended") {
+                    contextoAudio.resume().then(tocar).catch(() => { });
+                } else {
+                    tocar();
+                }
+            } catch {
+                // El curso continúa aunque el dispositivo no permita audio.
+            }
+        }
+
+        $("sonido").addEventListener("click", () => {
+            sonidoActivo = !sonidoActivo;
+
+            $("sonido").textContent =
+                sonidoActivo ? "Sonido: activado" : "Sonido: desactivado";
+
+            $("sonido").setAttribute("aria-pressed", String(sonidoActivo));
+
+            if (sonidoActivo) reproducirSonido("cambio");
+        });
+
+        // HOJA DE CÁLCULO INTERACTIVA
+        $("cambiar-valores").addEventListener("click", () => {
+            const primero = Math.floor(Math.random() * 40) + 10;
+            const segundo = Math.floor(Math.random() * 40) + 10;
+            const total = primero + segundo;
+
+            $("valor-uno").textContent = primero;
+            $("valor-dos").textContent = segundo;
+            $("valor-total").textContent = total;
+
+            $("explicacion-visual").textContent =
+                `${primero} + ${segundo} = ${total}. ` +
+                "SUMA vuelve a calcular al cambiar los valores.";
+
+            $("valor-total").classList.remove("destello");
+            void $("valor-total").offsetWidth;
+            $("valor-total").classList.add("destello");
+
+            reproducirSonido("cambio");
+        });
+    </script>
+</body>
+
+</html>
